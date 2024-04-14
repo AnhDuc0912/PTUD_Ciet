@@ -26,6 +26,7 @@ public class Bill_Form extends javax.swing.JPanel {
         this.user=user;
         service=new ServiceCustomer();
         initComponents();
+
         init();
     }
 

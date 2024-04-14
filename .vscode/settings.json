@@ -10,6 +10,7 @@
         "src/External_Library/TimingFramework-0.55.jar",
         "d:\\PTUD\\DeTai\\DeTai_Nhom8\\lib\\sqljdbc42.jar",
         "c:\\Users\\ptank\\Downloads\\jar_files\\mssql-jdbc-12.7.0.jre11-preview.jar",
-        "d:\\IUH\\HSK\\onTapCK\\lib\\mssql-jdbc-12.4.2.jre8.jar"
+        "d:\\IUH\\HSK\\onTapCK\\lib\\mssql-jdbc-12.4.2.jre8.jar",
+        "src/External_Library/sqljdbc42.jar"
     ]
 }

@@ -50,6 +50,9 @@ public class OrderFood_Form extends javax.swing.JPanel {
         //Tìm thông tin hóa đơn
         try {
             HoaDon=serviceS.FindHoaDonbyID_Ban(table);
+            System.out.println(HoaDon.toString());
+            int tongTien = serviceC.tinhTongTienTheoHoaDon().get(HoaDon.getIdHoaDon());
+            HoaDon.setTongtien(tongTien);
         } catch (SQLException ex) {
             Logger.getLogger(OrderFood_Form.class.getName()).log(Level.SEVERE, null, ex);
         }

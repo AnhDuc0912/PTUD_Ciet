@@ -14,18 +14,21 @@ import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.swing.ImageIcon;
 
 public class ServiceCustomer {
 
     private final Connection con;
 
-    //Connect tới DataBase       
+    // Connect tới DataBase
     public ServiceCustomer() {
         con = DatabaseConnection.getInstance().getConnection();
     }
 
-    //Lấy toàn bộ danh sách Món ăn theo loại Món Ăn đang kinh doanh
+    // Lấy toàn bộ danh sách Món ăn theo loại Món Ăn đang kinh doanh
     public ArrayList<ModelMonAn> MenuFood(String type) throws SQLException {
         ArrayList<ModelMonAn> list = new ArrayList<>();
         String sql = "SELECT ID_MonAn,TenMon,DonGia FROM MonAn WHERE Loai=? AND TrangThai='Dang kinh doanh'";
@@ -38,9 +41,11 @@ public class ServiceCustomer {
             int value = r.getInt("DonGia");
             ModelMonAn data;
             if (id < 90) {
-                data = new ModelMonAn(new ImageIcon(getClass().getResource("/Icons/Food/" + type + "/" + id + ".jpg")), id, name, value, type);
+                data = new ModelMonAn(new ImageIcon(getClass().getResource("/Icons/Food/" + type + "/" + id + ".jpg")),
+                        id, name, value, type);
             } else {
-                data = new ModelMonAn(new ImageIcon(getClass().getResource("/Icons/Food/Unknown/unknown.jpg")), id, name, value, type);
+                data = new ModelMonAn(new ImageIcon(getClass().getResource("/Icons/Food/Unknown/unknown.jpg")), id,
+                        name, value, type);
             }
             list.add(data);
         }
@@ -49,7 +54,8 @@ public class ServiceCustomer {
         return list;
     }
 
-    //Lấy danh sách Món ăn theo loại món ăn và thứ tự Tên/Giá tăng dần/Giá giảm dần đang kinh doanh
+    // Lấy danh sách Món ăn theo loại món ăn và thứ tự Tên/Giá tăng
+    // dần/Giá giảm dần đang kinh doanh
     public ArrayList<ModelMonAn> MenuFoodOrder(String type, String orderBy) throws SQLException {
         ArrayList<ModelMonAn> list = new ArrayList<>();
 
@@ -75,9 +81,11 @@ public class ServiceCustomer {
             int value = r.getInt("DonGia");
             ModelMonAn data;
             if (id < 90) {
-                data = new ModelMonAn(new ImageIcon(getClass().getResource("/Icons/Food/" + type + "/" + id + ".jpg")), id, name, value, type);
+                data = new ModelMonAn(new ImageIcon(getClass().getResource("/Icons/Food/" + type + "/" + id + ".jpg")),
+                        id, name, value, type);
             } else {
-                data = new ModelMonAn(new ImageIcon(getClass().getResource("/Icons/Food/Unknown/unknown.jpg")), id, name, value, type);
+                data = new ModelMonAn(new ImageIcon(getClass().getResource("/Icons/Food/Unknown/unknown.jpg")), id,
+                        name, value, type);
             }
             list.add(data);
         }
@@ -86,7 +94,7 @@ public class ServiceCustomer {
         return list;
     }
 
-    //Lấy toàn bộ danh sách bàn theo tầng
+    // Lấy toàn bộ danh sách bàn theo tầng
     public ArrayList<ModelBan> MenuTable(String floor) throws SQLException {
         ArrayList<ModelBan> list = new ArrayList<>();
         String sql = "SELECT ID_Ban,TenBan,Trangthai FROM Ban WHERE Vitri=?";
@@ -104,7 +112,8 @@ public class ServiceCustomer {
         p.close();
         return list;
     }
-    //Lấy danh sách bàn theo trạng thái bàn Tất cả/Còn trống/Đã đặt trước/Đang dùng bữa
+    // Lấy danh sách bàn theo trạng thái bàn Tất cả/Còn trống/Đã đặt
+    // trước/Đang dùng bữa
 
     public ArrayList<ModelBan> MenuTableState(String floor, String state) throws SQLException {
         ArrayList<ModelBan> list = new ArrayList<>();
@@ -134,10 +143,10 @@ public class ServiceCustomer {
         return list;
     }
 
-    //Lấy thông tin khách hàng từ ID người dùng
+    // Lấy thông tin khách hàng từ ID người dùng
     public ModelKhachHang getCustomer(int userID) throws SQLException {
         ModelKhachHang data = null;
-            String sql = "SELECT ID_KH, TenKH, FORMAT(Ngaythamgia, 'yyyy-mm-dd') AS NgayTG, Doanhso, Diemtichluy FROM KhachHang WHERE ID_ND = ?";
+        String sql = "SELECT ID_KH, TenKH, FORMAT(Ngaythamgia, 'yyyy-mm-dd') AS NgayTG, Doanhso, Diemtichluy FROM KhachHang WHERE ID_ND = ?";
         PreparedStatement p = con.prepareStatement(sql);
         p.setInt(1, userID);
         ResultSet r = p.executeQuery();
@@ -155,7 +164,7 @@ public class ServiceCustomer {
         return data;
     }
 
-    // Đổi tên Khách hàng 
+    // Đổi tên Khách hàng
     public void reNameCustomer(ModelKhachHang data) throws SQLException {
         String sql = "UPDATE KhachHang SET TenKH=? WHERE ID_KH=?";
         PreparedStatement p = con.prepareStatement(sql);
@@ -165,7 +174,7 @@ public class ServiceCustomer {
         p.close();
     }
 
-    //Lấy toàn bộ danh sách Voucher
+    // Lấy toàn bộ danh sách Voucher
     public ArrayList<ModelVoucher> MenuVoucher() throws SQLException {
         ArrayList<ModelVoucher> list = new ArrayList<>();
         String sql = "SELECT * FROM Voucher";
@@ -186,7 +195,7 @@ public class ServiceCustomer {
         return list;
     }
 
-    //Lấy danh sách Voucher theo mốc xu
+    // Lấy danh sách Voucher theo mốc xu
     public ArrayList<ModelVoucher> MenuVoucherbyPoint(String bypoint) throws SQLException {
         ArrayList<ModelVoucher> list = new ArrayList<>();
         String sql = "SELECT * FROM Voucher";
@@ -222,20 +231,21 @@ public class ServiceCustomer {
     }
 
     /*
-        Khi khách hàng đặt bàn thì tự động thêm mới một hóa đơn với ID_Ban và ID_KH từ tham số 
-        Tiền món ăn và Tiền giảm mặc định là 0
-        Trạng thái Hóa đơn mặc định là Chưa thanh toán
+     * Khi khách hàng đặt bàn thì tự động thêm mới một hóa đơn với ID_Ban
+     * và ID_KH từ tham số
+     * Tiền món ăn và Tiền giảm mặc định là 0
+     * Trạng thái Hóa đơn mặc định là Chưa thanh toán
      */
     public void InsertHoaDon(ModelBan table, ModelKhachHang customer) throws SQLException {
-        //Tìm ID_HD tiếp theo
-        int idHD=0;
-        PreparedStatement p_ID=con.prepareStatement("SELECT MAX(ID_HoaDon) +1 FROM HoaDon");
-        ResultSet r_id=p_ID.executeQuery();
-        if(r_id.next()){
-            idHD=r_id.getInt(1);
+        // Tìm ID_HD tiếp theo
+        int idHD = 0;
+        PreparedStatement p_ID = con.prepareStatement("SELECT MAX(ID_HoaDon) +1 FROM HoaDon");
+        ResultSet r_id = p_ID.executeQuery();
+        if (r_id.next()) {
+            idHD = r_id.getInt(1);
         }
-       
-        //Thêm Hoá Đơn mới
+
+        // Thêm Hoá Đơn mới
         String sql = "INSERT INTO HoaDon(ID_HoaDon,ID_KH,ID_Ban,NgayHD,TienMonAn,TienGiam,Trangthai)"
                 + " VALUES (?,?,?,?,0,0,'Chua thanh toan')";
         PreparedStatement p = con.prepareStatement(sql);
@@ -250,7 +260,30 @@ public class ServiceCustomer {
 
     }
 
-    //Lấy thông tin HoaDon mà Khách hàng vừa đặt, Hóa Đơn có trạng thái 'Chưa thanh toán'
+    public void datBan(ModelBan ban) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+
+        try {
+            connection = DatabaseConnection.getInstance().getConnection();
+            String sql = "UPDATE Ban SET Trangthai = ? WHERE ID_Ban = ?";
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, "Dang dung bua");
+            statement.setInt(2, ban.getID());
+
+            int rowsAffected = statement.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Đã cập nhật trạng thái của bàn thành 'Dang dung bua'.");
+            } else {
+                System.out.println("Không có bàn nào được cập nhật.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Lấy thông tin HoaDon mà Khách hàng vừa đặt, Hóa Đơn có trạng thái
+    // 'Chưa thanh toán'
     public ModelHoaDon FindHoaDon(ModelKhachHang customer) throws SQLException {
         ModelHoaDon hoadon = null;
         String sql = "SELECT ID_HoaDon,ID_KH,ID_Ban,FORMAT(NgayHD, 'yyyy-mm-dd') AS Ngay,TienMonAn,Code_Voucher,TienGiam,Tongtien,Trangthai FROM HoaDon "
@@ -268,37 +301,57 @@ public class ServiceCustomer {
             int tienGiam = r.getInt(7);
             int tongtien = r.getInt(8);
             String trangthai = r.getString(9);
-            hoadon = new ModelHoaDon(idHoaDon, idKH, idBan, ngayHD, tienMonAn, code_voucher, tienGiam, tongtien, trangthai);
+            hoadon = new ModelHoaDon(idHoaDon, idKH, idBan, ngayHD, tienMonAn, code_voucher, tienGiam, tongtien,
+                    trangthai);
         }
         r.close();
         p.close();
         return hoadon;
     }
 
-    //Thêm món ăn mới khách hàng vừa đặt vào CTHD
-    public void InsertCTHD(int ID_HoaDon, int ID_MonAn, int soluong) throws SQLException {
-        //Kiểm tra món ăn đã có trong CTHD hay chưa, nếu đã có cập nhật số lượng, nếu chưa thì thêm CTHD mới
+    public Map<Integer, Integer> tinhTongTienTheoHoaDon() throws SQLException {
+        Map<Integer, Integer> tongTienTheoHoaDon = new HashMap<>();
+
+        String sql = "SELECT ID_HoaDon, SUM(Thanhtien) AS TongTien FROM CTHD GROUP BY ID_HoaDon";
+        try (PreparedStatement stmt = con.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                int idHoaDon = rs.getInt("ID_HoaDon");
+                int tongTien = rs.getInt("TongTien");
+                tongTienTheoHoaDon.put(idHoaDon, tongTien);
+            }
+        }
+
+        return tongTienTheoHoaDon;
+    }
+
+    // Thêm món ăn mới khách hàng vừa đặt vào CTHD
+    public void InsertCTHD(int ID_HoaDon, int ID_MonAn, int soluong, int thanhTien) throws SQLException {
+        // Kiểm tra món ăn đã có trong CTHD hay chưa, nếu đã có cập nhật số lượng, nếu
+        // chưa thì thêm CTHD mới
         String sql = "SELECT 1 FROM CTHD WHERE ID_HoaDon=? AND ID_MonAn=?";
         PreparedStatement p = con.prepareStatement(sql);
         p.setInt(1, ID_HoaDon);
         p.setInt(2, ID_MonAn);
         ResultSet r = p.executeQuery();
         if (r.next()) {
-            // Nếu tồn tại 
-            String sql_update = "UPDATE CTHD SET SoLuong=SoLuong+? WHERE ID_HoaDon=? AND ID_MonAn=?";
+            // Nếu tồn tại
+            String sql_update = "UPDATE CTHD SET SoLuong=SoLuong+?, ThanhTien=ThanhTien+? WHERE ID_HoaDon=? AND ID_MonAn=?";
             PreparedStatement p1 = con.prepareStatement(sql_update);
             p1.setInt(1, soluong);
-            p1.setInt(2, ID_HoaDon);
-            p1.setInt(3, ID_MonAn);
+            p1.setInt(2, thanhTien);
+            p1.setInt(3, ID_HoaDon);
+            p1.setInt(4, ID_MonAn);
             p1.execute();
             p1.close();
         } else {
-            //Nếu không tồn tại
-            String sql_insert = "INSERT INTO CTHD(ID_HoaDon,ID_MonAn,SoLuong) VALUES (?,?,?)";
+            // Nếu không tồn tại
+            String sql_insert = "INSERT INTO CTHD(ID_HoaDon, ID_MonAn, SoLuong, ThanhTien) VALUES (?, ?, ?, ?)";
             PreparedStatement p1 = con.prepareStatement(sql_insert);
             p1.setInt(1, ID_HoaDon);
             p1.setInt(2, ID_MonAn);
             p1.setInt(3, soluong);
+            p1.setInt(4, thanhTien);
             p1.execute();
             p1.close();
         }
@@ -328,7 +381,7 @@ public class ServiceCustomer {
         return list;
     }
 
-    //Lấy toàn bộ danh sách hóa đơn của một khách hàng
+    // Lấy toàn bộ danh sách hóa đơn của một khách hàng
     public ArrayList<ModelHoaDon> getListHD(int ID_KH) throws SQLException {
         ArrayList<ModelHoaDon> list = new ArrayList<>();
         String sql = "SELECT ID_HoaDon, ID_KH, ID_Ban, FORMAT(NgayHD, 'yyyy-mm-dd') AS Ngay, TienMonAn, Code_Voucher, TienGiam, Tongtien, Trangthai FROM HoaDon WHERE ID_KH = ? ORDER BY ID_HoaDon";
@@ -345,7 +398,8 @@ public class ServiceCustomer {
             int tienGiam = r.getInt(7);
             int tongtien = r.getInt(8);
             String trangthai = r.getString(9);
-            ModelHoaDon hoadon = new ModelHoaDon(idHoaDon, idKH, idBan, ngayHD, tienMonAn, code_voucher, tienGiam, tongtien, trangthai);
+            ModelHoaDon hoadon = new ModelHoaDon(idHoaDon, idKH, idBan, ngayHD, tienMonAn, code_voucher, tienGiam,
+                    tongtien, trangthai);
             list.add(hoadon);
         }
         r.close();
@@ -353,7 +407,8 @@ public class ServiceCustomer {
         return list;
     }
 
-    //Lấy toàn bộ danh sách hóa đơn của một khách hàng theo mốc Tổng tiền Hóa Đơn
+    // Lấy toàn bộ danh sách hóa đơn của một khách hàng theo mốc Tổng
+    // tiền Hóa Đơn
     public ArrayList<ModelHoaDon> getListHDOrder(int ID_KH, String order) throws SQLException {
         ArrayList<ModelHoaDon> list = new ArrayList<>();
         String sql = "SELECT ID_HoaDon,ID_KH,ID_Ban,FORMAT(NgayHD, 'yyyy-mm-dd') AS Ngay,TienMonAn,Code_Voucher,TienGiam,Tongtien,Trangthai FROM HoaDon "
@@ -391,7 +446,8 @@ public class ServiceCustomer {
             int tienGiam = r.getInt(7);
             int tongtien = r.getInt(8);
             String trangthai = r.getString(9);
-            ModelHoaDon hoadon = new ModelHoaDon(idHoaDon, idKH, idBan, ngayHD, tienMonAn, code_voucher, tienGiam, tongtien, trangthai);
+            ModelHoaDon hoadon = new ModelHoaDon(idHoaDon, idKH, idBan, ngayHD, tienMonAn, code_voucher, tienGiam,
+                    tongtien, trangthai);
             list.add(hoadon);
         }
         r.close();
@@ -399,8 +455,10 @@ public class ServiceCustomer {
         return list;
     }
 
-    //Sau khi khách hàng đổi Voucher ở phần Điểm tích lũy, áp dụng trực tiếp lên hóa đơn mà khách hàng đang sử dụng
-    //Thực hiện Trigger giảm Điểm tích lũy của Khách hàng và tính Tiền Giảm giá
+    // Sau khi khách hàng đổi Voucher ở phần Điểm tích lũy, áp dụng trực
+    // tiếp lên hóa đơn mà khách hàng đang sử dụng
+    // Thực hiện Trigger giảm Điểm tích lũy của Khách hàng và tính Tiền
+    // Giảm giá
     public void exchangeVoucher(int ID_HoaDon, String Code_Voucher) throws SQLException {
         String sql = "UPDATE HoaDon SET Code_Voucher=? WHERE ID_HoaDon=?";
         PreparedStatement p = con.prepareStatement(sql);
